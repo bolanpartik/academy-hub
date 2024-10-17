@@ -4,9 +4,11 @@ const mongoose = require('mongoose')
 
 const { MONGO_URL, PORT } = require('./config')
 const { adminRouter } = require('./routes/admin')
+const { userRouter } = require('./routes/user')
 
 app.use(express.json())
 app.use('/api/v1/admin', adminRouter)
+app.use('/api/v1/user', userRouter)
 
 async function main() {
     try {
