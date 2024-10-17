@@ -5,6 +5,7 @@ const { Admin } = require('../db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { JWT_ADMIN_SECRET } = require('../config')
+const { adminMiddleware } = require('../middleware/admin')
 
 const signUpBodySchema = z.object({
     email: z.string().email(),
@@ -86,15 +87,15 @@ adminRouter.post('/signin', async function (req, res) {
     }
 })
 
-adminRouter.post('/course', async function (req, res) {
+adminRouter.post('/course', adminMiddleware, async function (req, res) {
 
 })
 
-adminRouter.put('/course', async function (req, res) {
+adminRouter.put('/course', adminMiddleware, async function (req, res) {
 
 })
 
-adminRouter.get('/courses', async function (req, res) {
+adminRouter.get('/courses', adminMiddleware, async function (req, res) {
 
 })
 
