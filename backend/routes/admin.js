@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const adminRouter = Router()
 const { z } = require('zod')
-const { Admin } = require('../db')
+const { Admin, Course } = require('../db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { JWT_ADMIN_SECRET } = require('../config')
@@ -16,6 +16,14 @@ const signUpBodySchema = z.object({
 const signInBodySchema = z.object({
     email: z.string().email(),
     password: z.string().min(8)
+})
+
+const courseBodySchema = z.object({
+    title: z.string(),
+    description: z.string().min(20),
+    imageUrl: z.string(),
+    price: z.number(),
+    adminId: z.string()
 })
 
 adminRouter.post('/signup', async function (req, res) {
@@ -88,15 +96,77 @@ adminRouter.post('/signin', async function (req, res) {
 })
 
 adminRouter.post('/course', adminMiddleware, async function (req, res) {
+    const adminId = req.adminId
+    const { title, description, imageUrl, price } = req.body
+    const parshedBody = courseBodySchema.safeParse({
+        title,
+        description,
+        imageUrl,
+        price,
+        adminId
+    })
+    if (!parshedBody.success) {
+        return res.status(401).send({
+            message: parshedBody.error.issues
+        })
+    }
+    try {
 
+        const course = await Course.create({
+            title,
+            description,
+            imageUrl,
+            price,
+            adminId
+        })
+        res.status(200).send({
+            message: 'Course created successfully',
+            courseId: course._id
+        })
+    } catch (error) {
+        res.status(500).send({
+            message: 'Error while adding course to db',
+            error
+        })
+    }
 })
 
 adminRouter.put('/course', adminMiddleware, async function (req, res) {
-
+    const { courseId, title, description, imageUrl, price } = req.body
+    try {
+        await Course.findOneAndUpdate({
+            _id: courseId
+        }, {
+            title,
+            description,
+            imageUrl,
+            price
+        })
+        res.status(201).send({
+            message: 'Course updated successfully'
+        })
+    } catch (error) {
+        res.status(401).send({
+            message: 'Course not found',
+            error
+        })
+    }
 })
 
 adminRouter.get('/courses', adminMiddleware, async function (req, res) {
-
+    const adminId = req.adminId
+    try {
+        const courses = await Course.find({
+            adminId
+        })
+        res.status(200).send({
+            courses
+        })
+    } catch (error) {
+        res.status(404).send({
+            message: 'No course found'
+        })
+    }
 })
 
 module.exports = {
