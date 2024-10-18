@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const courseRouter = Router()
 const { Course } = require('../db')
+const { userMiddleware } = require('../middleware/user')
 
 courseRouter.get('/show', async function (req, res) {
     try {
@@ -17,7 +18,7 @@ courseRouter.get('/show', async function (req, res) {
     }
 })
 
-courseRouter.post('/purchase', async function (req, res) {
+courseRouter.post('/purchase', userMiddleware, async function (req, res) {
 
 })
 
