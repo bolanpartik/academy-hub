@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const userRouter = Router()
 const { z } = require('zod')
-const { User } = require('../db')
+const { User, Purchase, Course } = require('../db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { JWT_USER_SECRET } = require('../config')
@@ -94,7 +94,33 @@ userRouter.post('/signin', async function (req, res) {
 })
 
 userRouter.get('/purchases', userMiddleware, async function (req, res) {
+    const userId = req.userId
+    try {
 
+        const purchases = await Purchase.find({
+            userId
+        })
+        if (purchases.length < 1) {
+            return res.status(404).send({
+                message: 'No purchase found'
+            })
+        }
+
+        // get all the courses by id from purchases array containig courseId's
+        const allPurchases = await Course.find({
+            _id: { $in: purchases.map(p => p.courseId) }
+        })
+
+        res.status(200).send({
+            allPurchases
+        })
+        
+    } catch (error) {
+        res.status(500).send({
+            message: 'Error while getting courses from database',
+            error
+        })
+    }
 })
 
 module.exports = {
