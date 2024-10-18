@@ -5,6 +5,7 @@ const { User } = require('../db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { JWT_USER_SECRET } = require('../config')
+const { userMiddleware } = require('../middleware/user')
 
 const signUpBodySchema = z.object({
     email: z.string().email(),
@@ -92,7 +93,7 @@ userRouter.post('/signin', async function (req, res) {
     }
 })
 
-userRouter.get('/purchases', async function (req, res) {
+userRouter.get('/purchases', userMiddleware, async function (req, res) {
 
 })
 
