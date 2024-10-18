@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const courseRouter = Router()
-const { Course } = require('../db')
+const { Course, Purchase } = require('../db')
 const { userMiddleware } = require('../middleware/user')
 
 courseRouter.get('/show', async function (req, res) {
@@ -19,7 +19,27 @@ courseRouter.get('/show', async function (req, res) {
 })
 
 courseRouter.post('/purchase', userMiddleware, async function (req, res) {
-
+    const userId = req.userId
+    const { isPaid, courseId } = req.body
+    if (!isPaid) {
+        return res.status(403).send({
+            message: 'Payment not done'
+        })
+    }
+    try {
+        await Purchase.create({
+            userId,
+            courseId
+        })
+        res.status(201).send({
+            message: 'Course purchase successfully'
+        })
+    } catch (error) {
+        res.status(409).send({
+            message: 'Course not purchased',
+            error
+        })
+    }
 })
 
 module.exports = {
