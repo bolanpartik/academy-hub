@@ -3,6 +3,7 @@ const courseRouter = Router()
 const { Course, Purchase } = require('../db')
 const { userMiddleware } = require('../middleware/user')
 
+// Show all the existing courses
 courseRouter.get('/show', async function (req, res) {
     try {
         const courses = await Course.find({})
@@ -18,6 +19,7 @@ courseRouter.get('/show', async function (req, res) {
     }
 })
 
+// Purchase course for a user
 courseRouter.post('/purchase', userMiddleware, async function (req, res) {
     const userId = req.userId
     const { isPaid, courseId } = req.body

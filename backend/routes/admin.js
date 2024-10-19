@@ -26,6 +26,7 @@ const courseBodySchema = z.object({
     adminId: z.string()
 })
 
+// admin sign up 
 adminRouter.post('/signup', async function (req, res) {
     const { email, password, firstName, lastName } = req.body
     const parshedBody = signUpBodySchema.safeParse({
@@ -59,6 +60,7 @@ adminRouter.post('/signup', async function (req, res) {
     }
 })
 
+// admin signup and return jwt token
 adminRouter.post('/signin', async function (req, res) {
     const { email, password } = req.body
     const parshedBody = signInBodySchema.safeParse({
@@ -95,6 +97,7 @@ adminRouter.post('/signin', async function (req, res) {
     }
 })
 
+// Route to create a course
 adminRouter.post('/course', adminMiddleware, async function (req, res) {
     const adminId = req.adminId
     const { title, description, imageUrl, price } = req.body
@@ -131,6 +134,7 @@ adminRouter.post('/course', adminMiddleware, async function (req, res) {
     }
 })
 
+// Route to update a existing course
 adminRouter.put('/course', adminMiddleware, async function (req, res) {
     const { courseId, title, description, imageUrl, price } = req.body
     try {
@@ -153,6 +157,7 @@ adminRouter.put('/course', adminMiddleware, async function (req, res) {
     }
 })
 
+// Get all the course created by specific admin
 adminRouter.get('/courses', adminMiddleware, async function (req, res) {
     const adminId = req.adminId
     try {

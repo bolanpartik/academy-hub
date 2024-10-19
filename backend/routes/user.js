@@ -23,6 +23,7 @@ const signInBodySchema = z.object({
         .min(8, { message: 'Password must be al least 8 characters long' }),
 })
 
+// user sign up
 userRouter.post('/signup', async function (req, res) {
     const { email, password, firstName, lastName } = req.body
     const parseResult = signUpBodySchema.safeParse({
@@ -55,6 +56,7 @@ userRouter.post('/signup', async function (req, res) {
 
 })
 
+// user sign in and return jwt
 userRouter.post('/signin', async function (req, res) {
     const { email, password } = req.body
 
@@ -93,6 +95,7 @@ userRouter.post('/signin', async function (req, res) {
     }
 })
 
+// Get purchases of specific user
 userRouter.get('/purchases', userMiddleware, async function (req, res) {
     const userId = req.userId
     try {
@@ -114,7 +117,7 @@ userRouter.get('/purchases', userMiddleware, async function (req, res) {
         res.status(200).send({
             allPurchases
         })
-        
+
     } catch (error) {
         res.status(500).send({
             message: 'Error while getting courses from database',
